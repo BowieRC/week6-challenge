@@ -1,0 +1,20 @@
+:root{
+    --headColor: rgb(50, 50, 50);
+}
+
+header{
+    background-color: var(--headColor);
+    color: white;
+    height: 75px;
+    text-align: center;
+}
+
+
+
+
+
+
+
+footer{
+
+}
