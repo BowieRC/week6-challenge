@@ -8,7 +8,9 @@ var requestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + reque
 
 var citySearchEl = document.getElementById("city-search");
 var cityDisplayEl = document.getElementById("city-display");
-var displayEl = document.getElementById("display")
+
+var weatherDisplayEl = $("#weather-display-container");
+
 
 var gCity;
 var gLimit=1;
@@ -17,13 +19,19 @@ var weatherInfo = [];
 
 citySearchEl.addEventListener("keydown", (event) => {
     if(event.key == "Enter"){
+        var weatherDisplay = document.getElementById("weather-display-container");
+        while (weatherDisplay.hasChildNodes()){
+            weatherDisplay.removeChild(weatherDisplay.firstChild);
+            cityDisplayEl.textContent = "";
+          }
+        console.log("weatherDisplay has children : ", weatherDisplay.children[0])
+
         gCity = citySearchEl.value;
         searchByCity();
     }
 })
 
 function searchByCity(){
-    gCity = "Darwin";
         fetch("https://api.openweathermap.org/geo/1.0/direct?q="+gCity+"&limit="+ gLimit + "&appid=" + apiKey, {})
         .then(function(response){
             return response.json();
@@ -40,7 +48,7 @@ function searchByCity(){
                 .then(function(data){
                     cityDisplayEl.textContent = data.city.name + ", " + data.city.country;
                     console.log(data);
-                    test(data);
+                    searchbyDate(data);
                 })
             } catch (error){
                 console.log(error);
@@ -72,9 +80,7 @@ function searchByCity(){
         console.log("weatherInfo : " + weatherInfo)
     }
 
-    // searchByCity();
-
-function test(data){
+function searchbyDate(data){
         for(i=0; i<data.list.length; i++){
             if(data.list[i].dt_txt.split(" ")[1] == "15:00:00"){
                 console.log(data.list[i].dt_txt.split(" ")[0], ", 3 PM : ", data.list[i]);
@@ -85,7 +91,9 @@ function test(data){
 
     function displayToPage(data){
 
-        var displayContainerEl = $("<section>");
+       
+      
+        
         var weatherWrapperEl = $("<div>");
         var dateWrapperEl = $("<div>");
         var ImageWrapperEl = $("<div>");
@@ -97,7 +105,6 @@ function test(data){
         var windSpeedEl = $("<p>");
 
 
-        displayContainerEl.attr("class", "display-container");
         weatherWrapperEl.attr("class", "weather-wrapper");
         dateWrapperEl.attr("class", "time-wrapper");
         dateWrapperEl.text(data.list[i].dt_txt.split(" ")[0]);
@@ -110,15 +117,14 @@ function test(data){
         temperatureEl.attr("class", "temperature");
         temperatureEl.text(Math.round(data.list[i].main.temp) + "\u00B0C");
         humidityEl.attr("class", "humidity");
-        humidityEl.text(Math.floor(data.list[i].main.humidity) + "%");
+        humidityEl.text(Math.round(data.list[i].main.humidity) + "%");
         windSpeedEl.attr("class", "Wind Speed");
         windSpeedEl.text((data.list[i].wind.speed) + " m/s");
 
         windSpeedEl.attr("class", "wind-speed");
 
         
-        $("#display").append(displayContainerEl);
-        displayContainerEl.append(weatherWrapperEl);
+        weatherDisplayEl.append(weatherWrapperEl);
         weatherWrapperEl.append(dateWrapperEl);
         weatherWrapperEl.append(ImageWrapperEl);
         ImageWrapperEl.append(ImageEl);
